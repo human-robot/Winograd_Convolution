@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WINOGRAD_TEST_
+#define WINOGRAD_TEST_
 
 #include "../include/winograd_kernel.h"
 #include "../include/winograd_layer.h"
@@ -131,3 +132,5 @@ void testWinograd() {
 
 	delete[] buffer;
 }
+
+#endif

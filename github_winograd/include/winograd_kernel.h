@@ -3,8 +3,9 @@
 #define WINOGRAD_KERNEL_H
 
 #include <memory>
+#include <iostream>
 
-#define DEBUG_WINOGRAD 1
+#define DEBUG_WINOGRAD 0
 
 #if DEBUG_WINOGRAD
 	#include <cassert>
@@ -12,19 +13,11 @@
 
 namespace WINOGRAD_KERNEL {
 
-	const enum WINOGRAD_MATRIX {
-		WINOGRAD_A = 0,
-		WINOGRAD_B,
-		WINOGRAD_G,
-	};
-	const enum WINOGRAD_ALG {
-		WT_8X8_F_6X6_3X3 = 0,
-		WT_6X6_F_4X4_3X3,
-		WT_8X8_F_4X4_5X5,
-	};
 
 	const int MATRIX_KINDS = 3;
 	const int WINOGRAD_PAIR_KINDS = 3;
+	enum WINOGRAD_MATRIX { WINOGRAD_A = 0, WINOGRAD_B, WINOGRAD_G, };
+	enum WINOGRAD_ALG { WT_8X8_F_6X6_3X3 = 0, WT_6X6_F_4X4_3X3, WT_8X8_F_4X4_5X5, };
 
 	template<WINOGRAD_ALG a>
 	struct WinogradTransformMatrix {};

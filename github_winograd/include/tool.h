@@ -5,6 +5,8 @@
 #include <iostream>
 #include "mathlib.h"
 
+#include <cblas.h>
+
 namespace PUBLIC_TOOL{
 
 	template<typename Dtype>

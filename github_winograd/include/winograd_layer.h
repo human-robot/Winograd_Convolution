@@ -117,7 +117,7 @@ namespace WINOGRAD_KERNEL
 
 		}
 
-		template <typename Dtype>
+                //template <typename Dtype>
 		const std::shared_ptr<Dtype> get_inference_cpu(Dtype* data, const Dtype* par, Dtype* col_buff) {
 
 			m_inputOrg = data;
@@ -183,7 +183,7 @@ namespace WINOGRAD_KERNEL
 
 		}
 
-		template <typename Dtype>
+		//template <typename Dtype>
 		void trans_input2winograd(const Dtype *data, Dtype *col_buff) {
 			// Transform input to Winograd domain
 
@@ -219,7 +219,7 @@ namespace WINOGRAD_KERNEL
 			// col_buff has (tile_h_in*tile_w_in) x (conv_out_channels) x (ntiles_h*ntiles_w)
 	 }
 
-		template <typename Dtype>
+		//template <typename Dtype>
 		void trans2spatial(Dtype *data) {
 
 			Dtype *winogradRes = new Dtype[this->conv_out_channels_*ntiles_h_*ntiles_w_*tile_h_out_*tile_w_out_];
@@ -235,7 +235,7 @@ namespace WINOGRAD_KERNEL
 			delete[] winogradRes;
 		}
 
-		template<typename Dtype>
+		//template<typename Dtype>
 		void winograd_input_im2col_cpu(const Dtype *data, Dtype *col_buff)
 		{
 			int height = m_iH;
@@ -270,7 +270,7 @@ namespace WINOGRAD_KERNEL
 		}
 
 
-		template <typename Dtype>
+		//template <typename Dtype>
 		void forward_cpu_bias(Dtype* output,
 			const Dtype* bias) {
 
@@ -289,7 +289,7 @@ namespace WINOGRAD_KERNEL
 		}
 
 
-		template<typename Dtype>
+		//template<typename Dtype>
 		void winograd_output_col2im_cpu(const Dtype *col_buff, Dtype *data)
 		{
 			const int output_h = m_iH, output_w = m_iW;
