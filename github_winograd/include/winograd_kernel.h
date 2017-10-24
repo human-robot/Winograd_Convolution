@@ -255,18 +255,14 @@ namespace WINOGRAD_KERNEL {
 			isCalc = false;
 
 			switch (alg) {
-
 			case WT_8X8_F_6X6_3X3:
 				matrix = WinogradTransformMatrix<WT_8X8_F_6X6_3X3>::get(mat, row, col); break;
 			case WT_6X6_F_4X4_3X3:
 				matrix = WinogradTransformMatrix<WT_6X6_F_4X4_3X3>::get(mat, row, col); break;
 			case WT_8X8_F_4X4_5X5:
 				matrix = WinogradTransformMatrix<WT_8X8_F_4X4_5X5>::get(mat, row, col); break;
-
 			}
-
 		}
-
 	private:
 		const float *matrix; // = A, B, G
 		int row, col;// matrix: row*col
@@ -322,17 +318,17 @@ namespace WINOGRAD_KERNEL {
 
 	void kronecker_product(float *out, const float *in1, const float *in2, int m, int n, int p, int q)
 	{
-		for (int i = 0; i < m; ++i) {
-			for (int j = 0; j < n; ++j) {
-				for (int k = 0; k < p; ++k) {
-					for (int l = 0; l < q; ++l) {
-						out[(p*i + k)*n*q + q*j + l] = in1[n*i + j] * in2[k*q + l];
-						/* compute in float precision and then convert it back to float for accuracy */
-					}
-				}
-			}
-		}
-	}
+           for (int i = 0; i < m; ++i) {
+              for (int j = 0; j < n; ++j) {
+                 for (int k = 0; k < p; ++k) {
+                    for (int l = 0; l < q; ++l) {
+                       out[(p*i + k)*n*q + q*j + l] = in1[n*i + j] * in2[k*q + l];
+                       /*compute in float precision and then convert it back to float for accuracy */
+                    }
+                 }
+              }
+           }
+        }
 
 	void winograd2D_initialize() {
 		//singleton, precomputation before inference  
