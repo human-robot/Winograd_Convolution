@@ -136,7 +136,7 @@ get_inference_cpu:类似与caffe framework中每层layer的推理函数forward�
         //resOut 计算结果大小，为之分配空间．oH*oW*out_C
   	std::shared_ptr<Dtype> resOut = std::shared_ptr<Dtype>(new Dtype[m_oH*m_oW*conv_out_channels_]);
   	//trans weight to winograd domain
-  	trans_weight2wiongrad();  //Gg
+  	trans_weight2wiongrad();  //Gg  得到(H*W,C_in*C_out)
   
   	for (int n = 0; n < m_batchSize; n++) {
   		//trans input to winograd domain
@@ -167,13 +167,32 @@ trans_weight2wiongrad
                 m_winogradWeight = 
  		new Dtype[conv_in_channels_*conv_out_channels_* tile_h_in_ *tile_w_in_];
  
- 	PUBLIC_TOOL::dlm_cpu_gemm(CblasNoTrans, CblasTrans,
- 		tile_h_in_*tile_w_in_, (conv_in_channels_ / m_group_)*conv_out_channels_, m_kH*m_kW,
- 		(Dtype)1,
- 		Winograd_Kron::getInstance(m_alg, WINOGRAD_G)->get().get(),
- 		m_weightOrg,
- 		(Dtype)0,
- 		m_winogradWeight);			
+ 	PUBLIC_TOOL::dlm_cpu_gemm(
+                CblasNoTrans, //A不转置
+                CblasTrans,   //B转置
+ 		tile_h_in_*tile_w_in_, //A的行 M
+                (conv_in_channels_ / m_group_)*conv_out_channels_, //B的列
+                m_kH*m_kW, //K A的列，B的行
+ 		(Dtype)1,  //alpha
+ 		Winograd_Kron::getInstance(m_alg, WINOGRAD_G)->get().get(),//A
+ 		m_weightOrg,//B
+ 		(Dtype)0,//beta
+ 		m_winogradWeight//C
+                );			
+        C = alpha * op(A)  * op(B) + beta * C
+        #M = tile_h_in_ * tile_w_in_ , 
+        #N = conv_in_c * conv_out_c , 
+        #K = m_kH*m_kW
+        # lda  = K   A的列
+        # ldb  = K   B的列
+        # ldc  = N   C的列
+        ＃A  M行K列,  op(A) : (M,K)  
+        # B  K行N列,  op(B) : (N,K) 
+        # C  A*B = (M,K)(K,N) = (M,N)
+        # winograd Matrix
+        # matrix G: M,K     (tile_h_in_ * tile_w_in_  , m_kH * m_kW            )
+        # matrix g: K,N     (m_kH*m_kW                , conv_in_c * conv_out_c ) 
+        # m_winogradWeight: (M,N)   (tile_h_in_ * tile_w_in_, conv_in_c * conv_out_c)
  
  }
 
@@ -190,8 +209,8 @@ C = alpha*op(A)*op(B) + beta*C
    const float alpha, const float* A, const float* B, const float beta,
    float* C) 
    {
-   int lda = (TransA == CblasNoTrans) ? K : M;
-   int ldb = (TransB == CblasNoTrans) ? N : K;
+   int lda = (TransA == CblasNoTrans) ? K : M;//A的列
+   int ldb = (TransB == CblasNoTrans) ? N : K;//B的列
    cblas_sgemm(CblasRowMajor, TransA, TransB, M, N, K, alpha, A, lda, B,
    			ldb, beta, C, N);
    }
