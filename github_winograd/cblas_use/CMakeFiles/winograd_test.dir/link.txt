@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++0x    CMakeFiles/winograd_test.dir/src/winograd_test.o  -o winograd_test -rdynamic -lcblas 

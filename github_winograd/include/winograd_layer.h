@@ -130,13 +130,13 @@ const std::shared_ptr<Dtype> get_inference_cpu(Dtype* data, const Dtype* par, Dt
 
 	std::shared_ptr<Dtype> resOut = std::shared_ptr<Dtype>(new Dtype[m_oH*m_oW*conv_out_channels_]);
 	//trans weight to winograd domain
-	trans_weight2wiongrad();
+	trans_weight2wiongrad();  //Gg
 
 	for (int n = 0; n < m_batchSize; n++) {
 		//trans input to winograd domain
-		trans_input2winograd(m_inputOrg + n*m_bottom_dim_, m_col_buff);
+		trans_input2winograd(m_inputOrg + n*m_bottom_dim_, m_col_buff);//BTd
 		// Convolution in Winograd domain
-		winograd_conv();
+		winograd_conv(); //Gg*BTd
 		// Transform back to time domain	
 		trans2spatial(resOut.get() + n*this->m_top_dim_);
 		//bias
@@ -189,7 +189,7 @@ void trans_input2winograd(const Dtype *data, Dtype *col_buff) {
 		(Dtype)0, this->m_winogradInput);
 
 }
-void winograd_conv() {
+void winograd_conv() { //Gg*BTd
 	// Convolution in Winograd domain
 	for (int j = 0; j < tile_h_in_*tile_w_in_; ++j) {
 	  for (int g = 0; g < this->m_group_; ++g) {
@@ -215,8 +215,8 @@ void trans2spatial(Dtype *data) {
 		tile_h_out_*tile_w_out_, 
 		tile_h_in_*tile_w_in_,
 		(Dtype)1, 
-		m_col_buff,
-		Winograd_Kron::getInstance(m_alg, WINOGRAD_A)->get().get(),
+		m_col_buff,//Gg.*BTd
+		Winograd_Kron::getInstance(m_alg, WINOGRAD_A)->get().get(),//A
 		(Dtype)0, 
 		winogradRes);
 
